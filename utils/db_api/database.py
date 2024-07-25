@@ -55,11 +55,22 @@ class DatabaseManager:
         finally:
             self.close()
     
-    def query_data(self, query_sql):
+    def query_data_fetch_all(self, query_sql):
         self.connect()
         try:
             self.cursor.execute(query_sql)
             records = self.cursor.fetchall()
+            return records
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(f"Error querying data: {error}")
+        finally:
+            self.close()
+            
+    def query_data_fetch_one(self, query_sql,data):
+        self.connect()
+        try:
+            self.cursor.execute(query_sql,data)
+            records = self.cursor.fetchone()
             return records
         except (Exception, psycopg2.DatabaseError) as error:
             print(f"Error querying data: {error}")
