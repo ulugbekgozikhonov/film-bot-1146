@@ -8,7 +8,7 @@ from utils.db_api.query import create_user_table,create_channels_table
 
 
 async def on_startup(dispatcher):
-    # Birlamchi komandalar (/star va /help)
+    # Birlamchi komandalar (/star va /help) 
     await set_default_commands(dispatcher)
     # dbmanager.create_table(create_table_sql=create_user_table)
     dbmanager.create_table(create_table_sql=create_channels_table)
@@ -18,5 +18,5 @@ async def on_startup(dispatcher):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, on_startup=on_startup)
+    executor.start_polling(dp, on_startup=on_startup,skip_updates=True)
 

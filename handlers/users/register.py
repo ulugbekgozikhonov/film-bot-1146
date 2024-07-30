@@ -1,9 +1,12 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
+from aiogram.types import ReplyKeyboardRemove
 from states.user import RegisterState
 from loader import dp,dbmanager
 from keyboards.default.user import share_contact
 from utils.db_api.query import insert_user
+from keyboards.inline.user import channels
+from utils.misc.check_user import chek_user_in_channel
 
 
 @dp.callback_query_handler(state=RegisterState.langugae)
@@ -40,14 +43,15 @@ async def full_name_handler(message:types.Message,state:FSMContext):
     phone_number = message.contact.phone_number
     await state.update_data(phone_number=phone_number)
     data = await state.get_data()
+    user_not_in_channels = await chek_user_in_channel(message)
     lang = data.get("lang")
     if lang == "uz":
-        await message.answer("Botdan Foydalanish uchun Kanallarga azo bo'lishing kerak🤬🤬")
+        await message.answer("Botdan Foydalanish uchun Kanallarga azo bo'lishing kerak🤬🤬",reply_markup=channels(lang,user_not_in_channels))
     elif lang == "ru":
-        await message.answer("Вы должны подписаться на каналы, чтобы использовать бота")
+        await message.answer("Вы должны подписаться на каналы, чтобы использовать бота",reply_markup=channels(lang,user_not_in_channels))
     else:
-        await message.answer("You need to subscribe to the channels to use the bot:")
-    
+        await message.answer("You need to subscribe to the channels to use the bot:",reply_markup=channels(lang,user_not_in_channels))
+    await message.answer("ads",reply_markup=ReplyKeyboardRemove())
     data = await state.get_data()
     data_tuple = (data['full_name'],data['phone_number'],data['chat_id'],data['lang'])
     dbmanager.insert_data(insert_sql=insert_user,data=data_tuple)

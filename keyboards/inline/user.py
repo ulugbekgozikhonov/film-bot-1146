@@ -1,6 +1,4 @@
 from aiogram.types import InlineKeyboardButton,InlineKeyboardMarkup
-from loader import dbmanager
-from utils.db_api.query import get_channles
 language = InlineKeyboardMarkup(
     inline_keyboard=[
         [
@@ -13,21 +11,24 @@ language = InlineKeyboardMarkup(
     ]
 )
 
-def channels(lang):
-    channels = dbmanager.query_data_fetch_all(get_channles)
+def channels(lang,channels):
     channels_markup = InlineKeyboardMarkup()
     
     if channels:
-        for i,channel in enumerate(channels):
+        text = ""
+        for i,url in enumerate(channels):
             if lang == "uz":
-                button = InlineKeyboardButton(text=f"{i+1}-kanal",callback_data=f"channel_{i+1}",url=channel[1])
+                button = InlineKeyboardButton(text=f"{i+1}-kanal",callback_data=f"channel_{i+1}",url=url)
+                text="✅Tasdiqlash"
             elif lang == "ru":
-                button = InlineKeyboardButton(text=f"{i+1}-канал",callback_data=f"channel_{i+1}",url=channel[1])
+                button = InlineKeyboardButton(text=f"{i+1}-канал",callback_data=f"channel_{i+1}",url=url)
+                text="✅Подтверждение"
             elif lang == "en":
-                button = InlineKeyboardButton(text=f"{i+1}-channel",callback_data=f"channel_{i+1}",url=channel[1])
+                button = InlineKeyboardButton(text=f"{i+1}-channel",callback_data=f"channel_{i+1}",url=url)
+                text = "✅Confirmation"
             channels_markup.add(button)
             
-        return channels_markup
+        return channels_markup.add(InlineKeyboardButton(text=text,callback_data="confirm"))
         
 
 #     InlineKeyboardMarkup(
